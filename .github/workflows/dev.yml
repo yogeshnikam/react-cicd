@@ -2,30 +2,37 @@ name: Deploy to Development
 
 on:
   push:
-    branches:
-      - develop
+    branches: ["main"]
+  pull: 
+    branches: ["main"]
+
+env: 
+  CI: false
 
 jobs:
-  build-deploy-dev:
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repo
       - uses: actions/checkout@v4
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm' 
 
       - name: Install dependencies
         run: npm install
 
       - name: Build with development config
-        run: npm run build:dev
+        run: npm run build
 
-      - name: Deploy to S3 (Development)
-        run: aws s3 sync build/ s3://my-react-dev-bucket --delete
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
+      - name: Upload production Ready Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: production-files
+          path: './build'
+
