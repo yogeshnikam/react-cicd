@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Read Variable
+        run: echo "My Development Envoirnment Variable is ${{ vars.DEVELOPMENT}}" 
+
+      - name: Read Secrets
+        run: echo "My Development Envoirnment Secret is ${{ secrets.DEVELOPMENT}}" 
+
       - name: Checkout Repo
         uses: actions/checkout@v4  # ✅ Fixed indentation
 
