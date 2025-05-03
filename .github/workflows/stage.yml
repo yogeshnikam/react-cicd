@@ -1,16 +1,16 @@
-name: Deploy to Production
+name: Deploy to Stage
 
 on:
   push:
     branches:
-      - production
-      
+      - stage
+
 env:
   CI: true
 
 jobs:
   build:
-    name: Build and Deploy to Production
+    name: Build and Deploy to Stage
     runs-on: ubuntu-latest
 
     steps:
@@ -44,5 +44,5 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: production-build
+          name: stage-build
           path: ./build  # Update this path if your build output differs
