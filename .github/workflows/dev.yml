@@ -2,40 +2,44 @@ name: Deploy to Development
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 env:
   CI: false
 
 jobs:
   build:
-    name: Build
+    name: Build and Deploy to Development
     runs-on: ubuntu-latest
 
     steps:
-      - name: Read Variable
-        run: echo "My Development Envoirnment Variable is ${{ vars.DEVELOPMENT}}" 
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Read Secrets
-        run: echo "My Development Envoirnment Secret is ${{ secrets.DEVELOPMENT}}" 
-
-      - name: Checkout Repo
-        uses: actions/checkout@v4  # ✅ Fixed indentation
-
-      - name: Set up Node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Read Environment Variable
+        run: echo "Development Environment Variable: ${{ vars.DEVELOPMENT }}" 
+
+      - name: Read Secret
+        run: echo "Development Secret: ${{ secrets.DEVELOPMENT }}" 
+
+      - name: Install Dependencies
         run: npm install
 
-      - name: Build with development config
-        run: npm run build
+      - name: Run Tests
+        run: npm run tests
 
-      - name: Upload production Ready Build
+      - name: Build Application
+        run: npm run build --if-present
+
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: production-files
-          path: ./build  # ✅ Make sure this matches your actual output dir (maybe ./public if using Webpack directly)
+          name: development-build
+          path: ./build  # Update this path if your build output differs
