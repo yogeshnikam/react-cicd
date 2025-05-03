@@ -13,13 +13,17 @@ env:
   NAME: 'Yogesh Nikam'
 
 jobs:
+    
   build:
     name: Build and Deploy to Development
     runs-on: ubuntu-latest
 
+    env:
+      NODE_VERSION: 21
+    
     steps:
       - name: Print Name
-        run:  echo "Hellow $NAME"
+        run:  echo "Hello $NAME ${{env.NODE_VERSION}}"
         
       - name: Checkout Repository
         uses: actions/checkout@v4
