@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - stage
+  pull_request:
+    branches: 
+      - stage
 
 env:
   CI: false
