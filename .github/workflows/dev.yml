@@ -10,6 +10,7 @@ on:
 
 env:
   CI: false
+  NAME: 'Yogesh Nikam'
 
 jobs:
   build:
@@ -17,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Print Name
+        run:  echo "Hellow $NAME"
+        
       - name: Checkout Repository
         uses: actions/checkout@v4
 
