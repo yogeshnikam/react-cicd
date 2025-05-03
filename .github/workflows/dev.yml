@@ -22,8 +22,8 @@ jobs:
       NODE_VERSION: 21
     
     steps:
-      - name: Print Name
-        run:  echo "Hello $BUILD $NAME $NODE_VERSION"
+      - name: Print Name with Secret
+        run:  echo "Hello $BUILD $NAME $NODE_VERSION My API Key is ${{secrets.API_KEY}}"
         env:
           BUILD: 'Your'
         
