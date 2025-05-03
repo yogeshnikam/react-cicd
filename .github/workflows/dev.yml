@@ -23,7 +23,9 @@ jobs:
     
     steps:
       - name: Print Name
-        run:  echo "Hello $NAME ${{env.NODE_VERSION}}"
+        run:  echo "Hello $BUILD $NAME $NODE_VERSION"
+        env:
+          BUILD: 'Your'
         
       - name: Checkout Repository
         uses: actions/checkout@v4
