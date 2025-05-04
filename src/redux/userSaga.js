@@ -1,22 +1,19 @@
+import axios from 'axios';
 import { takeEvery, call, put } from 'redux-saga/effects';
 
 export function* getUsers() {
   try {
-    let data = yield call(fetch, 'https://jsonplaceholder.typicode.com/users');
-    
-    if (!data || !data.json) {
-      throw new Error('Invalid response');
-    }
+    const response = yield call(axios.get, 'https://jsonplaceholder.typicode.com/users');
 
-    data = yield call([data, 'json']);
+    const data = response.data;
 
     if (!Array.isArray(data)) {
       throw new Error('Expected an array of users');
     }
-    
+
     yield put({ type: 'FETCH_USERS_SUCCESS', payload: data });
   } catch (error) {
-    yield put({ type: 'FETCH_USERS_ERROR', error });
+    yield put({ type: 'FETCH_USERS_ERROR', error: error.message || 'Unknown error' });
   }
 }
 
