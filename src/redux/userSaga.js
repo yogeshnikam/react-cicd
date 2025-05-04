@@ -13,11 +13,9 @@ export function* getUsers() {
     if (!Array.isArray(data)) {
       throw new Error('Expected an array of users');
     }
-
-    console.log('Data:', data);
+    
     yield put({ type: 'FETCH_USERS_SUCCESS', payload: data });
   } catch (error) {
-    console.error('Error fetching users:', error);
     yield put({ type: 'FETCH_USERS_ERROR', error });
   }
 }

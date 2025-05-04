@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import rootReducer from '../rootReducers';
 import { userReducer } from '../reducers';
 
-jest.mock('./reducers', () => ({
+jest.mock('../reducers', () => ({
   userReducer: jest.fn((state = { test: true }, action) => state),
 }));
 
