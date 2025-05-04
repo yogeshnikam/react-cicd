@@ -1,18 +1,31 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 const initialState = {
     loading: false,
     error: null,
     users: []
-}
+};
 
-export const userReducer = (state=initialState, action) =>{
-    switch(action.type){
-        case 'FETCH_USERS': 
-            return {...state,loading: true}
-        case 'FETCH_USERS_SUCCESS':
-            return {...state, users: action.payload, loading: false}
-        case 'FETCH_USERS_ERROR': 
-            return {...state, loading: false, error: action.error}
-        default: 
-            return state
+const userSlice = createSlice({
+    name: 'users',
+    initialState,
+    reducers: {
+        fetchUsersStart: (state) => {
+            state.loading = true;
+            state.error = null;
+        },
+        fetchUsersSuccess: (state, action) => {
+            state.loading = false;
+            state.error = null;
+            state.users = action.payload;
+        },
+        fetchUsersError: (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        }
     }
-}
+});
+
+export const { fetchUsersStart, fetchUsersSuccess, fetchUsersError } = userSlice.actions;
+export const userReducer = userSlice.reducer;
+export default userSlice.reducer;
