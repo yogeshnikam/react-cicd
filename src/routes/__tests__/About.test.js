@@ -11,8 +11,13 @@ describe('About Component', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByText('About Page')).toBeInTheDocument();
-        expect(screen.getByText('This is the about page of our React application.')).toBeInTheDocument();
+        expect(screen.getByText('About Us')).toBeInTheDocument();
+        expect(screen.getByText('This is a React application demonstrating:')).toBeInTheDocument();
+        expect(screen.getByText('Redux Toolkit for state management')).toBeInTheDocument();
+        expect(screen.getByText('Redux Saga for side effects')).toBeInTheDocument();
+        expect(screen.getByText('React Router for navigation')).toBeInTheDocument();
+        expect(screen.getByText('Code splitting for performance')).toBeInTheDocument();
+        expect(screen.getByText('Webpack configuration for different environments')).toBeInTheDocument();
     });
 
     it('contains a link to the home page', () => {

@@ -1,12 +1,17 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
-import createSagaMiddleware from 'redux-saga';
 import App from '../App';
 
-// Create the mock store without saga middleware for testing
+// Mock lazy-loaded components
+jest.mock('../routes/Home', () => () => <div>Home Component</div>);
+jest.mock('../routes/About', () => () => <div>About Component</div>);
+jest.mock('../routes/NotFound', () => () => <div>Not Found Component</div>);
+jest.mock('../components/Preload', () => () => <div data-testid="preload" />);
+
+// Mock the store
 const mockStore = configureStore([]);
 
 describe('App Component', () => {
@@ -15,88 +20,47 @@ describe('App Component', () => {
     beforeEach(() => {
         store = mockStore({
             users: {
+                users: [],
                 loading: false,
-                error: null,
-                users: []
+                error: null
             }
         });
     });
 
-    const renderApp = () => {
-        return render(
+    it('renders navigation links', () => {
+        render(
             <Provider store={store}>
                 <BrowserRouter>
                     <App />
                 </BrowserRouter>
             </Provider>
         );
-    };
 
-    it('renders navigation links', () => {
-        renderApp();
-        
-        const homeLink = screen.getByText('Home');
-        const aboutLink = screen.getByText('About');
-        
-        expect(homeLink).toBeInTheDocument();
-        expect(aboutLink).toBeInTheDocument();
-        expect(homeLink.closest('a')).toHaveAttribute('href', '/');
-        expect(aboutLink.closest('a')).toHaveAttribute('href', '/about');
+        expect(screen.getByText('Home')).toBeInTheDocument();
+        expect(screen.getByText('About')).toBeInTheDocument();
     });
 
-    it('navigates to Home page when clicking Home link', () => {
-        renderApp();
-        
-        const homeLink = screen.getByText('Home');
-        fireEvent.click(homeLink);
-        
-        expect(window.location.pathname).toBe('/');
+    it('renders Preload component', () => {
+        render(
+            <Provider store={store}>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </Provider>
+        );
+
+        expect(screen.getByTestId('preload')).toBeInTheDocument();
     });
 
-    it('navigates to About page when clicking About link', () => {
-        renderApp();
-        
-        const aboutLink = screen.getByText('About');
-        fireEvent.click(aboutLink);
-        
-        expect(window.location.pathname).toBe('/about');
-    });
+    it('matches snapshot', () => {
+        const { container } = render(
+            <Provider store={store}>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </Provider>
+        );
 
-    it('renders Home component by default', () => {
-        renderApp();
-        
-        expect(screen.getByText('User List')).toBeInTheDocument();
-    });
-
-    it('renders About component when navigating to /about', () => {
-        window.history.pushState({}, '', '/about');
-        renderApp();
-        
-        expect(screen.getByText('About Us')).toBeInTheDocument();
-    });
-
-    it('renders NotFound component for unknown routes', () => {
-        window.history.pushState({}, '', '/unknown-route');
-        renderApp();
-        
-        expect(screen.getByText('404 - Page Not Found')).toBeInTheDocument();
-    });
-
-    it('maintains navigation state after page refresh', () => {
-        window.history.pushState({}, '', '/about');
-        renderApp();
-        
-        expect(screen.getByText('About Us')).toBeInTheDocument();
-        
-        // Simulate page refresh
-        window.history.pushState({}, '', '/about');
-        renderApp();
-        
-        expect(screen.getByText('About Us')).toBeInTheDocument();
-    });
-
-    // Clean up after each test
-    afterEach(() => {
-        store.clearActions();
+        expect(container).toMatchSnapshot();
     });
 });

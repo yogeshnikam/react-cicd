@@ -1,12 +1,11 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { BrowserRouter } from 'react-router-dom';
+import configureStore from 'redux-mock-store';
 import Home from '../Home';
-import { fetchUsersStart } from '../../redux/actions/userActions';
 
-// Create mock store
+// Mock the store
 const mockStore = configureStore([]);
 
 describe('Home Component', () => {
@@ -14,21 +13,21 @@ describe('Home Component', () => {
 
     beforeEach(() => {
         store = mockStore({
-            user: {
+            users: {
                 users: [],
                 loading: false,
-                error: null,
-            },
+                error: null
+            }
         });
     });
 
-    it('renders loading state correctly', () => {
+    it('renders loading state', () => {
         store = mockStore({
-            user: {
+            users: {
                 users: [],
                 loading: true,
-                error: null,
-            },
+                error: null
+            }
         });
 
         render(
@@ -42,13 +41,13 @@ describe('Home Component', () => {
         expect(screen.getByText('Loading users...')).toBeInTheDocument();
     });
 
-    it('renders error state correctly', () => {
+    it('renders error state', () => {
         store = mockStore({
-            user: {
+            users: {
                 users: [],
                 loading: false,
-                error: 'Failed to fetch users',
-            },
+                error: 'Failed to fetch users'
+            }
         });
 
         render(
@@ -62,18 +61,18 @@ describe('Home Component', () => {
         expect(screen.getByText('Error: Failed to fetch users')).toBeInTheDocument();
     });
 
-    it('renders users list correctly', () => {
+    it('renders list of users', () => {
         const mockUsers = [
-            { id: 1, name: 'John Doe', email: 'john@example.com', phone: '1234567890' },
-            { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '0987654321' },
+            { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
+            { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' }
         ];
 
         store = mockStore({
-            user: {
+            users: {
                 users: mockUsers,
                 loading: false,
-                error: null,
-            },
+                error: null
+            }
         });
 
         render(
@@ -85,12 +84,22 @@ describe('Home Component', () => {
         );
 
         expect(screen.getByText('John Doe')).toBeInTheDocument();
-        expect(screen.getByText('john@example.com')).toBeInTheDocument();
+        expect(screen.getByText((content, element) => {
+            return element.textContent === 'Email: john@example.com';
+        })).toBeInTheDocument();
+        expect(screen.getByText((content, element) => {
+            return element.textContent === 'Phone: 123-456-7890';
+        })).toBeInTheDocument();
         expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-        expect(screen.getByText('jane@example.com')).toBeInTheDocument();
+        expect(screen.getByText((content, element) => {
+            return element.textContent === 'Email: jane@example.com';
+        })).toBeInTheDocument();
+        expect(screen.getByText((content, element) => {
+            return element.textContent === 'Phone: 987-654-3210';
+        })).toBeInTheDocument();
     });
 
-    it('dispatches fetchUsersStart action on mount', async () => {
+    it('dispatches fetchUsersStart action on mount', () => {
         render(
             <Provider store={store}>
                 <BrowserRouter>
@@ -99,9 +108,7 @@ describe('Home Component', () => {
             </Provider>
         );
 
-        await waitFor(() => {
-            const actions = store.getActions();
-            expect(actions).toContainEqual(fetchUsersStart());
-        });
+        const actions = store.getActions();
+        expect(actions).toContainEqual({ type: 'users/fetchUsersStart' });
     });
 }); 

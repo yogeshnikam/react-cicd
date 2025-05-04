@@ -3,29 +3,29 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import App from './App';
+import createSagaMiddleware from 'redux-saga';
+import App from '../App';
 
 // Mock the store
-const mockStore = configureStore([thunk]);
+const sagaMiddleware = createSagaMiddleware();
+const mockStore = configureStore([sagaMiddleware]);
+const store = mockStore({
+    users: {
+        users: [],
+        loading: false,
+        error: null
+    }
+});
 
 // Mock the root element
 document.body.innerHTML = '<div id="root"></div>';
 
-describe('Application Entry Point', () => {
-    let store;
-
+describe('Root Component', () => {
     beforeEach(() => {
-        store = mockStore({
-            users: {
-                loading: false,
-                error: null,
-                users: []
-            }
-        });
+        document.title = '';
     });
 
-    it('renders the application without crashing', () => {
+    it('renders without crashing', () => {
         const { container } = render(
             <Provider store={store}>
                 <BrowserRouter>
@@ -33,7 +33,20 @@ describe('Application Entry Point', () => {
                 </BrowserRouter>
             </Provider>
         );
-        expect(container).toBeTruthy();
+
+        expect(container.querySelector('#root')).toBeTruthy();
+    });
+
+    it('renders the app container', () => {
+        const { container } = render(
+            <Provider store={store}>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </Provider>
+        );
+
+        expect(container.querySelector('.app-container')).toBeTruthy();
     });
 
     it('sets up Redux store correctly', () => {

@@ -6,8 +6,25 @@ module.exports = {
     entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "bundle.js",
-        publicPath: "/"
+        filename: "[name].[contenthash].js",
+        chunkFilename: "[name].[contenthash].js",
+        publicPath: "/",
+        clean: true
+    },
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+            minSize: 20000,
+            maxSize: 244000,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendors",
+                    chunks: "all",
+                },
+            },
+        },
+        runtimeChunk: "single",
     },
     devServer: {
         static: {
@@ -18,9 +35,6 @@ module.exports = {
         hot: true,
         open: true
     },
-    resolve: {
-        extensions: [".js", ".jsx"]
-    },
     module: {
         rules: [
             {
@@ -29,7 +43,10 @@ module.exports = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env", "@babel/preset-react"]
+                        presets: [
+                            "@babel/preset-env",
+                            ["@babel/preset-react", { runtime: "automatic" }]
+                        ]
                     }
                 }
             },
@@ -41,7 +58,11 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './public/index.html'
+            template: './public/index.html',
+            filename: 'index.html'
         })
-    ]
+    ],
+    resolve: {
+        extensions: [".js", ".jsx"]
+    }
 };
