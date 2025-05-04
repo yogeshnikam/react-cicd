@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const About = () => {
     return (
@@ -12,6 +13,7 @@ const About = () => {
                 <li>Code splitting for performance</li>
                 <li>Webpack configuration for different environments</li>
             </ul>
+            <Link to="/" className="home-link">Go to Home</Link>
         </div>
     );
 };
