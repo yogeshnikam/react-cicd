@@ -7,24 +7,27 @@ module.exports = {
             '<rootDir>/__mocks__/fileMock.js',
     },
     transform: {
-        '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { 
-            presets: [
-                '@babel/preset-env',
-                ['@babel/preset-react', { runtime: 'automatic' }]
-            ] 
-        }],
+        '^.+\\.(js|jsx)$': 'babel-jest',
     },
-    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+    testMatch: ['**/__tests__/**/*.js?(x)', '**/?(*.)+(spec|test).js?(x)'],
+    moduleFileExtensions: ['js', 'jsx', 'json', 'node'],
     globals: {
         'ts-jest': {
             tsconfig: 'tsconfig.jest.json',
         },
     },
     collectCoverageFrom: [
-        'src/**/*.{js,jsx,ts,tsx}',
-        '!src/**/*.d.ts',
-        '!src/**/*.stories.{js,jsx,ts,tsx}',
-        '!src/**/index.{js,jsx,ts,tsx}',
+        'src/**/*.{js,jsx}',
+        '!src/index.js',
+        '!src/reportWebVitals.js',
         '!src/setupTests.js',
     ],
+    coverageThreshold: {
+        global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80,
+        },
+    },
 };

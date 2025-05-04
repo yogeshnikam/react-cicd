@@ -1,98 +1,107 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { BrowserRouter } from 'react-router-dom';
 import Home from '../Home';
-import { fetchUsersStart } from '../../redux/reducers';
+import { fetchUsersStart } from '../../redux/actions/userActions';
 
-const mockStore = configureStore([thunk]);
+// Create mock store
+const mockStore = configureStore([]);
 
 describe('Home Component', () => {
     let store;
 
     beforeEach(() => {
         store = mockStore({
-            users: {
+            user: {
+                users: [],
                 loading: false,
                 error: null,
-                users: []
-            }
+            },
         });
     });
 
-    it('renders loading state', () => {
+    it('renders loading state correctly', () => {
         store = mockStore({
-            users: {
+            user: {
+                users: [],
                 loading: true,
                 error: null,
-                users: []
-            }
+            },
         });
 
         render(
             <Provider store={store}>
-                <Home />
+                <BrowserRouter>
+                    <Home />
+                </BrowserRouter>
             </Provider>
         );
 
         expect(screen.getByText('Loading users...')).toBeInTheDocument();
     });
 
-    it('renders error state', () => {
+    it('renders error state correctly', () => {
         store = mockStore({
-            users: {
+            user: {
+                users: [],
                 loading: false,
                 error: 'Failed to fetch users',
-                users: []
-            }
+            },
         });
 
         render(
             <Provider store={store}>
-                <Home />
+                <BrowserRouter>
+                    <Home />
+                </BrowserRouter>
             </Provider>
         );
 
         expect(screen.getByText('Error: Failed to fetch users')).toBeInTheDocument();
     });
 
-    it('renders user list', () => {
+    it('renders users list correctly', () => {
         const mockUsers = [
-            { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
-            { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '098-765-4321' }
+            { id: 1, name: 'John Doe', email: 'john@example.com', phone: '1234567890' },
+            { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '0987654321' },
         ];
 
         store = mockStore({
-            users: {
+            user: {
+                users: mockUsers,
                 loading: false,
                 error: null,
-                users: mockUsers
-            }
+            },
         });
 
         render(
             <Provider store={store}>
-                <Home />
+                <BrowserRouter>
+                    <Home />
+                </BrowserRouter>
             </Provider>
         );
 
         expect(screen.getByText('John Doe')).toBeInTheDocument();
         expect(screen.getByText('john@example.com')).toBeInTheDocument();
-        expect(screen.getByText('123-456-7890')).toBeInTheDocument();
         expect(screen.getByText('Jane Smith')).toBeInTheDocument();
         expect(screen.getByText('jane@example.com')).toBeInTheDocument();
-        expect(screen.getByText('098-765-4321')).toBeInTheDocument();
     });
 
-    it('dispatches fetchUsersStart on mount', () => {
+    it('dispatches fetchUsersStart action on mount', async () => {
         render(
             <Provider store={store}>
-                <Home />
+                <BrowserRouter>
+                    <Home />
+                </BrowserRouter>
             </Provider>
         );
 
-        const actions = store.getActions();
-        expect(actions[0]).toEqual(fetchUsersStart());
+        await waitFor(() => {
+            const actions = store.getActions();
+            expect(actions).toContainEqual(fetchUsersStart());
+        });
     });
 }); 

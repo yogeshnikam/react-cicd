@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
+import { configure } from '@testing-library/react';
 
 // Add TextEncoder and TextDecoder polyfills
 global.TextEncoder = TextEncoder;
@@ -32,4 +33,9 @@ global.IntersectionObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),
     unobserve: jest.fn(),
     disconnect: jest.fn(),
-})); 
+}));
+
+// Configure testing library
+configure({
+  testIdAttribute: 'data-testid',
+}); 

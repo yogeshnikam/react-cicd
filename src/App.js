@@ -5,7 +5,7 @@ import About from './routes/About';
 import NotFound from './routes/NotFound';
 import './App.css';
 
-function App() {
+const App = () => {
     return (
         <div className="app-container">
             <nav className="nav-container">
@@ -22,6 +22,6 @@ function App() {
             </main>
         </div>
     );
-}
+};
 
 export default App;
