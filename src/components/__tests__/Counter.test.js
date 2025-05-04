@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import { Counter } from './Counter'; // adjust the path as needed
+import { Counter } from '../Counter'; // adjust the path as needed
 
 describe('Counter Component', () => {
   test('renders with initial count of 0', () => {
